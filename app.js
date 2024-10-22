@@ -3,6 +3,8 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+const serverless = require("serverless-http");
+
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
@@ -34,4 +36,4 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-module.exports = app;
+module.exports = serverless(app);
