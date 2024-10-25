@@ -4,16 +4,45 @@ const app = express();
 require("dotenv").config();
 const sgMail = require("@sendgrid/mail");
 const API_KEY = process.env.SENDGRID_API_KEY;
-const cors = require("cors");
+const { handleRequestData } = require("../middleware/middleware");
+const rateLimiter = require("../middleware/rateLimiter");
 
 app.use(express.json());
 
+// Set up allowed origins
+const allowedOrigins = [
+  process.env.DEV_URL,
+  process.env.PRODUCTION_URL,
+  process.env.PRODUCTION_URL_2,
+  process.env.PRODUCTION_URL_3,
+];
+console.log(process.env.PRODUCTION_URL_3);
+// CORS Middleware
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+
+  // Respond to preflight requests
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+// Trust proxy and rate limiter
+app.set("trust proxy", 1); // number of proxies between user and server
+app.use(rateLimiter);
+
 // Define your routes
-app.get("/api", async (req, res) => {
+app.get("/api", (req, res) => {
   res.json({ message: "API is working!" });
 });
 
-app.post("/api/email", cors(), async function (req, res, next) {
+app.post("/api/email", handleRequestData, function (req, res, next) {
   const requestData = req.body;
 
   const currentDate = () => {
