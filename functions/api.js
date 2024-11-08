@@ -16,7 +16,7 @@ const allowedOrigins = [
   process.env.PRODUCTION_URL_2,
   process.env.PRODUCTION_URL_3,
 ];
-console.log(process.env.PRODUCTION_URL_3);
+
 // CORS Middleware
 app.use((req, res, next) => {
   const origin = req.headers.origin;
@@ -143,8 +143,8 @@ app.post("/api/email", handleRequestData, function (req, res, next) {
         </html>`;
 
   const msg = {
-    to: "jjdate23@gmail.com", // Change to your recipient
-    from: "jjdate@live.com", // Change to your verified sender
+    to: "rnrrapidlogisticsinc@gmail.com", // Change to your recipient
+    from: "rnremail78@gmail.com", // Change to your verified sender
     subject: `New Quote from ${requestData.email} ${currentDate()}`,
     text: `
                 ${requestData.name} has sent you an email!
